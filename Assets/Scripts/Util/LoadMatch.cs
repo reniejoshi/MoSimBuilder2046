@@ -87,11 +87,6 @@ public class LoadMatch : MonoBehaviour
                 DeleteRobot();
             }
             if (EditorApplication.isPlaying) return;
-        #else
-            if (RobotLoaded())
-            {
-                DeleteRobot();
-            }
         #endif
         
         if (!CheckField())
@@ -238,9 +233,10 @@ public class LoadMatch : MonoBehaviour
     
     public void CheckSeasons() 
     {
-        string resourcesPath = Path.Combine(Application.dataPath, "Resources", "Robots");
-        
         availableSeasons.Clear();
+        
+        #if UNITY_EDITOR
+        string resourcesPath = Path.Combine(Application.dataPath, "Resources", "Robots");
         
         if (Directory.Exists(resourcesPath))
         {
@@ -251,6 +247,12 @@ public class LoadMatch : MonoBehaviour
                 string folderName = Path.GetFileName(path);
                 availableSeasons.Add(folderName);
             }
+        }
+        #endif
+        
+        if (availableSeasons.Count == 0 && !string.IsNullOrEmpty(robotSeasonSelected.selectedName))
+        {
+            availableSeasons.Add(robotSeasonSelected.selectedName);
         }
         
         if (selectedSeasonIndex >= availableSeasons.Count)
